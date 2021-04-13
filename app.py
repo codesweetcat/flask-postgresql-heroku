@@ -1,6 +1,6 @@
 from flask import Flask
-app = Flask(__name__)
 
+app = Flask(__name__)
 
 from flask import Flask, render_template, request, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -24,6 +24,11 @@ class User(db.Model):
 db.init_app()
 
 
+@app.route('/')
+def hello():
+    return {"hello": "world"}
+
+
 @app.route("/new", method=['get', 'post'])
 def new():
     if request.method == 'POST':
@@ -43,6 +48,3 @@ def users(username):
     else:
         return user.email
         return {"message": "success", "email": user.email}
-
-
-
