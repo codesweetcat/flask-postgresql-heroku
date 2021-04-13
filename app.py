@@ -1,6 +1,3 @@
-from flask import Flask
-
-app = Flask(__name__)
 
 from flask import Flask, render_template, request, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -9,7 +6,7 @@ import os
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret'
 
-app.config['SQLALCHEMY_DATABASE_URL'] = os.environ.get("DATABASE_URL")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 
 db = SQLAlchemy(app)
 
@@ -44,17 +41,47 @@ def hello_name(name):
 
 @app.route("/new", methods=['POST', 'GET'])
 def new():
+
     if request.method == 'POST':
-        email = request.form['email']
-        name = request.form['name']
-        user = User(name=name, email=email)
-        db.session.add(user)
-        db.session.commit()
-        return {"message": f"car {user.name} has been created successfully."}
+        if request.is_json:
+            data = request.get_json()
+            # role
+            # username
+            # password
+            # extra_properties
+            # email
+            # new_user = User(role=data['role'], username=data['username'],
+            #                 password=data['password'], extra_properties=data['extra_properties'],
+            #                 email=data['email']
+            #                 )
+
+            new_user = User(name=data['name'],
+                            email=data['email']
+                            )
+            db.session.add(new_user)
+            db.session.commit()
+            return {"message": f"car {new_user.username} has been created successfully."}
+        else:
+            return {"error": "The request payload is not in JSON format"}
+
+    elif request.method == 'GET':
+        users = User.query.all()
+        results = [
+            {
+                # "role": user.role,
+                # "username": user.username,
+                # "password": user.password,
+                # "extra_properties": user.extra_properties,
+                "email": user.email,
+                "name": user.name
+
+            } for user in users]
+
+        return {"count": len(results), "users": results}
 
 
 @app.route("/user/<username>")
-def users(username):
+def check_user(username):
     user = User.query.filter_by(name=username).first()
     if user is None:
         return {"message": "error", "email": "No user found"}
