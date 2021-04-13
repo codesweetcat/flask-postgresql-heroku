@@ -4,10 +4,11 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'secret'
-
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://kftezrmvknyped' \
+                                        ':1f0aafb514e3b448ec8fef0747644c976b98bf432c4091dc3195cfde0c0d4e66@ec2-34-225' \
+                                        '-167-77.compute-1.amazonaws.com:5432/dfqpbijmh6r3jq '
 db = SQLAlchemy(app)
 
 
@@ -31,7 +32,7 @@ class User(db.Model):
 
 @app.route('/')
 def hello():
-    return "Hello World!"
+    return os.environ.get("DATABASE_URL")
 
 
 @app.route('/<name>')
