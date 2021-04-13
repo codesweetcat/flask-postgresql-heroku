@@ -6,9 +6,7 @@ import os
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'secret'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://kftezrmvknyped' \
-                                        ':1f0aafb514e3b448ec8fef0747644c976b98bf432c4091dc3195cfde0c0d4e66@ec2-34-225' \
-                                        '-167-77.compute-1.amazonaws.com:5432/dfqpbijmh6r3jq '
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 db = SQLAlchemy(app)
 
 
@@ -81,15 +79,15 @@ def new():
         return {"count": len(results), "users": results}
 
 
-@app.route("/user/<username>")
-def check_user(username):
-    user = User.query.filter_by(name=username).first()
-    if user is None:
-        return {"message": "error", "email": "No user found"}
-    else:
-        return user.email
-        return {"message": "success", "email": user.email}
-
+# @app.route("/user/<username>")
+# def check_user(username):
+#     user = User.query.filter_by(name=username).first()
+#     if user is None:
+#         return {"message": "error", "email": "No user found"}
+#     else:
+#         return user.email
+#         return {"message": "success", "email": user.email}
+#
 
 if __name__ == '__main__':
     app.run()
