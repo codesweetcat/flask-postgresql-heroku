@@ -20,16 +20,29 @@ class User(db.Model):
     name = db.Column(db.String, unique=True)
     email = db.Column(db.String, unique=True)
 
+    def __init__(self,  name, email):
+        # self.id = id
+        self.name = name
+        self.email = email
 
-db.init_app()
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+
+# db.init_app()
 
 
 @app.route('/')
 def hello():
-    return {"hello": "world"}
+    return "Hello World!"
 
 
-@app.route("/new", method=['get', 'post'])
+@app.route('/<name>')
+def hello_name(name):
+    return "Hello {}!".format(name)
+
+
+@app.route("/new", methods=['POST', 'GET'])
 def new():
     if request.method == 'POST':
         email = request.form['email']
@@ -48,3 +61,7 @@ def users(username):
     else:
         return user.email
         return {"message": "success", "email": user.email}
+
+
+if __name__ == '__main__':
+    app.run()
